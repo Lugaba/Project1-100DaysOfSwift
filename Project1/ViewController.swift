@@ -26,6 +26,12 @@ class ViewController: UITableViewController {
                 pictures.append(item)
             }
         }
+        pictures.sort() // metodo para deixar em ordem ascendente
+    }
+    
+    override func viewWillAppear(_ animated: Bool) { // Estava bugando o tap, por isso adicionei aqui para falso
+        super.viewWillAppear(animated)
+        navigationController?.hidesBarsOnTap = false
     }
     
     //this code will be triggered when iOS wants to know how many rows are in the table view.
@@ -45,6 +51,9 @@ class ViewController: UITableViewController {
         if let vc = storyboard?.instantiateViewController(identifier: "Detail") as? DetailViewController {
             // 2: success! Set its selectedImage property
             vc.selectedImage = pictures[indexPath.row]
+            //vc.pictures = pictures
+            vc.totalPositions = pictures.count
+            vc.positionSelected = indexPath.row + 1
             
             // 3: now push it onto the navigation controller
             navigationController?.pushViewController(vc, animated: true)

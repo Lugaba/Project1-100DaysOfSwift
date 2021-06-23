@@ -11,11 +11,20 @@ class DetailViewController: UIViewController {
 
     @IBOutlet var imageView: UIImageView!
     var selectedImage: String?
+    var positionSelected: Int = 0
+    var totalPositions: Int = 0 // solucao dada pelo prof
+    //var pictures: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        title = selectedImage
+        // SOLUCAO QUE EU FIZ
+//        if let unwrapped = selectedImage {
+//            let posicao = pictures.firstIndex(of: unwrapped)!
+//            title = "\(posicao + 1)/\(pictures.count)"
+//        }
+        
+        title = "\(positionSelected)/\(totalPositions)"
         navigationItem.largeTitleDisplayMode = .never
         
         if let imageToLoad = selectedImage {
