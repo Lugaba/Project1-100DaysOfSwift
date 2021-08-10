@@ -9,15 +9,23 @@ import UIKit
 
 class ViewController: UITableViewController {
     var pictures = [String]()
+    var countPicture = [Int]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        countPicture = UserDefaults.standard.array(forKey: "countPicture") as? [Int] ?? [Int]()
         
         title = "Storm Viewer"
         navigationController?.navigationBar.prefersLargeTitles = true
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(recommendsApp))
         
+        performSelector(inBackground: #selector(readImages), with: nil)
+        tableView.reloadData()
+        
+    }
+    
+    @objc func readImages() {
         let fm = FileManager.default
         let path = Bundle.main.resourcePath!
         let items = try! fm.contentsOfDirectory(atPath: path)
@@ -25,6 +33,7 @@ class ViewController: UITableViewController {
         for item in items {
             if item.hasPrefix("nssl") {
                 pictures.append(item)
+                countPicture.append(0)
             }
         }
         pictures.sort() // metodo para deixar em ordem ascendente
@@ -33,6 +42,7 @@ class ViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) { // Estava bugando o tap, por isso adicionei aqui para falso
         super.viewWillAppear(animated)
         navigationController?.hidesBarsOnTap = false
+        tableView.reloadData()
     }
     
     //this code will be triggered when iOS wants to know how many rows are in the table view.
@@ -44,10 +54,14 @@ class ViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Picture", for: indexPath)
         cell.textLabel?.text = pictures[indexPath.row]
+        cell.detailTextLabel?.text = "\(countPicture[indexPath.row])"
         return cell // retornar uma TableViewCell
     }
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        countPicture[indexPath.row] += 1
+        UserDefaults.standard.set(countPicture, forKey: "countPicture")
+        
         // 1: try loading the "Detail" view controller and typecasting it to be DetailViewController
         if let vc = storyboard?.instantiateViewController(identifier: "Detail") as? DetailViewController {
             // 2: success! Set its selectedImage property
